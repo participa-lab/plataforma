@@ -94,11 +94,20 @@ rm-ALL: rm-containers rm-volumes rm-images ## Remove Docker containers, volumes,
 build: echo_vars ## [Re]Build all Docker containers
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} build
 
+build-nginx: echo_vars ## [Re]Build all Docker containers
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} build nginx-proxy
+
+build-participa: echo_vars ## [Re]Build all Docker containers
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} build participa
+
 build-no-cache: echo_vars ## Build all Docker containers without cache
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} build --no-cache
 
 start-recreate: echo_vars ## Start all Docker containers with recreated environments
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up --force-recreate
+
+run: echo_vars ## Start all Docker containers with recreated environments
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up -d --force-recreate
 
 start-rebuild: echo_vars ## Start all Docker containers, [re]building as needed
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up --build
