@@ -34,7 +34,8 @@ use-git-branch: # Use sha if set, if not use branch
 	fi
 
 PROD: ## Run in prod mode (e.g. `make PROD start`, etc.) using config in `prod.env`
-	$(eval ENV_FILE = polis/prod.env)
+	$(eval ENV_NAME = prod.env)
+	$(eval ENV_FILE = ${ENV_LOCATION}/${ENV_NAME})
 	$(eval TAG = $(shell grep -e ^TAG ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval POLIS_GIT_BRANCH = $(shell grep -e ^POLIS_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval POLIS_GIT_SHA = $(shell grep -e ^POLIS_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
@@ -43,13 +44,14 @@ PROD: ## Run in prod mode (e.g. `make PROD start`, etc.) using config in `prod.e
 	$(eval COMPOSE_FILE_ARGS = -f docker-compose.yml)
 
 TEST: ## Run in test mode (e.g. `make TEST e2e-run`, etc.) using config in `test.env`
-	$(eval ENV_FILE = polis/test.env)
+	$(eval ENV_NAME = test.env)
+	$(eval ENV_FILE = ${ENV_LOCATION}/${ENV_NAME})
 	$(eval TAG = $(shell grep -e ^TAG ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval POLIS_GIT_BRANCH = $(shell grep -e ^POLIS_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval POLIS_GIT_SHA = $(shell grep -e ^POLIS_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval PARTICIPA_GIT_BRANCH = $(shell grep -e ^PARTICIPA_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval PARTICIPA_GIT_SHA = $(shell grep -e ^PARTICIPA_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
-	$(eval COMPOSE_FILE_ARGS = -f docker-compose.yml -f docker-compose.test.yml)
+	$(eval COMPOSE_FILE_ARGS = -f docker-compose.yml)
 
 echo_vars: update-env use-git-branch
 	@echo ENV_FILE=${ENV_FILE}
@@ -62,7 +64,10 @@ start: echo_vars ## Start all Docker containers
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up
 
 start-sm: echo_vars ## Start all Docker containers
-	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up server nginx-proxy participa
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up server nginx-proxy participa --force-recreate
+
+start-math: echo_vars ## Start all Docker containers
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up math --force-recreate
 
 stop: echo_vars ## Stop all Docker containers
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} down

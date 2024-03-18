@@ -15,27 +15,28 @@ services:
       - DB_PORT=${POSTGRES_PORT:?error}
     networks:
         - polis-net
+    labels:
+        polis_tag: ${TAG:-dev}
     depends_on:
       - "postgres"
+      - "server"
+      - "math"
 
   server:
       extends:
         file: polis/docker-compose.yml
         service: server
-      build:
-        target: dev
-        args:
-          NODE_ENV: development
 
   math:
     extends:
         file: polis/docker-compose.yml
         service: math
-    ports:
-      # nrepl port
-      - "18975:18975"
     environment:
-      CHOKIDAR_USEPOLLING: "true"
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      - MATH_ENV=prod
+      - WEBSERVER_USERNAME=ws-pass
+      - WEBSERVER_PASS=ws-user
+
 
   postgres:
     extends:
@@ -49,9 +50,7 @@ services:
     extends:
         file: polis/docker-compose.yml
         service: file-server
-    build:
-      args:
-        NODE_ENV: development
+
 
   nginx-proxy:
     extends:
@@ -89,5 +88,11 @@ volumes:
     labels:
       polis_tag: ${TAG:-dev}
   media_volume:
+    labels:
+      polis_tag: ${TAG:-dev}
   static_volume:
+    labels:
+      polis_tag: ${TAG:-dev}
   redis_volume:
+    labels:
+      polis_tag: ${TAG:-dev}

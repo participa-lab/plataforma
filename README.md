@@ -12,6 +12,8 @@ make init
 
 ## Configure the project
 
+### Env Files
+
 Edit the three .env files for each environment (dev.env, test.env, prod.env) and set the variables of the section "PLATAFORMA PARTICIPA VARIABLES".
 
 Example:
@@ -28,6 +30,10 @@ POLIS_GIT_SHA=#Empty to use the latest commit of the branch
 PARTICIPA_GIT_BRANCH = "main"
 PARTICIPA_GIT_SHA=#Empty to use the latest commit of the branch
 ```
+
+### Nginx Configuration
+
+Add domain names as server names in `nginx/default.conf`
 
 This will make the polis project to be accessible at polis.app.raul and the main participa project to be accessible at app.raul.
 
