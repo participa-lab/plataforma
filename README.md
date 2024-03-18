@@ -21,6 +21,12 @@ Example:
 MAIN_DOMAIN = "app.raul"
 POLIS_SUBDOMAIN = "polis"
 POLIS_DOMAIN = "${POLIS_SUBDOMAIN}.${MAIN_DOMAIN}"
+
+POLIS_GIT_BRANCH = "edge"
+POLIS_GIT_SHA=#Empty to use the latest commit of the branch
+
+PARTICIPA_GIT_BRANCH = "main"
+PARTICIPA_GIT_SHA=#Empty to use the latest commit of the branch
 ```
 
 This will make the polis project to be accessible at polis.app.raul and the main participa project to be accessible at app.raul.

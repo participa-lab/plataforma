@@ -2,8 +2,14 @@
 
 SHELL=/bin/bash
 
-export ENV_FILE = polis/dev.env
-export TAG = $(shell grep -e ^TAG ${ENV_FILE} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
+export ENV_NAME = dev.env
+export ENV_LOCATION = polis
+export ENV_FILE = ${ENV_LOCATION}/${ENV_NAME}
+export TAG = $(shell grep -e ^TAG ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
+export POLIS_GIT_BRANCH = $(shell grep -e ^POLIS_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
+export POLIS_GIT_SHA = $(shell grep -e ^POLIS_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
+export PARTICIPA_GIT_BRANCH = $(shell grep -e ^PARTICIPA_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
+export PARTICIPA_GIT_SHA = $(shell grep -e ^PARTICIPA_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
 export COMPOSE_FILE_ARGS = -f docker-compose.yml
 
 init:
@@ -13,17 +19,39 @@ init:
 update-env:
 	cp -R *.env polis/
 
+use-git-branch: # Use sha if set, if not use branch
+	@echo "Using git branch ${POLIS_GIT_BRANCH} and sha ${POLIS_GIT_SHA}"
+	if [ -z "${POLIS_GIT_SHA}" ]; then \
+		cd polis && git checkout ${POLIS_GIT_BRANCH} && git pull; \
+	else \
+		cd polis && git checkout ${POLIS_GIT_SHA} && git pull; \
+	fi
+	@echo "Using git branch ${PARTICIPA_GIT_BRANCH} and sha ${PARTICIPA_GIT_SHA}"
+	if [ -z "${PARTICIPA_GIT_SHA}" ]; then \
+		cd participa && git checkout ${PARTICIPA_GIT_BRANCH} && git pull; \
+	else \
+		cd participa && git checkout ${PARTICIPA_GIT_SHA} && git pull; \
+	fi
+
 PROD: ## Run in prod mode (e.g. `make PROD start`, etc.) using config in `prod.env`
 	$(eval ENV_FILE = polis/prod.env)
-	$(eval TAG = $(shell grep -e ^TAG ${ENV_FILE} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval TAG = $(shell grep -e ^TAG ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval POLIS_GIT_BRANCH = $(shell grep -e ^POLIS_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval POLIS_GIT_SHA = $(shell grep -e ^POLIS_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval PARTICIPA_GIT_BRANCH = $(shell grep -e ^PARTICIPA_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval PARTICIPA_GIT_SHA = $(shell grep -e ^PARTICIPA_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval COMPOSE_FILE_ARGS = -f docker-compose.yml)
 
 TEST: ## Run in test mode (e.g. `make TEST e2e-run`, etc.) using config in `test.env`
 	$(eval ENV_FILE = polis/test.env)
-	$(eval TAG = $(shell grep -e ^TAG ${ENV_FILE} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval TAG = $(shell grep -e ^TAG ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval POLIS_GIT_BRANCH = $(shell grep -e ^POLIS_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval POLIS_GIT_SHA = $(shell grep -e ^POLIS_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval PARTICIPA_GIT_BRANCH = $(shell grep -e ^PARTICIPA_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
+	$(eval PARTICIPA_GIT_SHA = $(shell grep -e ^PARTICIPA_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval COMPOSE_FILE_ARGS = -f docker-compose.yml -f docker-compose.test.yml)
 
-echo_vars update-env:
+echo_vars: update-env use-git-branch
 	@echo ENV_FILE=${ENV_FILE}
 	@echo TAG=${TAG}
 
