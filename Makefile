@@ -69,6 +69,9 @@ start-sm: echo_vars ## Start all Docker containers
 start-math: echo_vars ## Start all Docker containers
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up math --force-recreate
 
+start-server: echo_vars ## Start all Docker containers
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up server --force-recreate
+
 stop: echo_vars ## Stop all Docker containers
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} down
 
