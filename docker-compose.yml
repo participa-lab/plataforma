@@ -17,6 +17,12 @@ services:
         - polis-net
     labels:
         polis_tag: ${TAG:-dev}
+    healthcheck:
+      test: curl --fail http://localhost:8000 || exit 1
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
     depends_on:
       postgres:
         condition: service_healthy
@@ -76,8 +82,10 @@ services:
       - static_volume:/participa/staticfiles
       - media_volume:/participa/mediafiles
     depends_on:
-      - "server"
-      - "participa"
+      participa:
+        condition: service_healthy
+      server:
+        condition: service_started
 
   maildev:
     image: docker.io/maildev/maildev:1.1.1
