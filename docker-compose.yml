@@ -13,6 +13,7 @@ services:
       - DB_PASSWORD=${POSTGRES_PASSWORD:?error}
       - DB_NAME=${POSTGRES_DB:?error}
       - DB_PORT=${POSTGRES_PORT:?error}
+      - DEBUG=false
     networks:
         - polis-net
     labels:
