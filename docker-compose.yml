@@ -14,6 +14,8 @@ services:
       - DB_NAME=${POSTGRES_DB:?error}
       - DB_PORT=${POSTGRES_PORT:?error}
       - DEBUG=false
+      - TELEGRAM_CLIENT_ID=${TELEGRAM_CLIENT_ID:?error}
+      - TELEGRAM_CLIENT_SECRET=${TELEGRAM_CLIENT_SECRET:?error}
     networks:
         - polis-net
     labels:
