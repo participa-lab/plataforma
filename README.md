@@ -29,6 +29,15 @@ POLIS_GIT_SHA=#Empty to use the latest commit of the branch
 
 PARTICIPA_GIT_BRANCH = "main"
 PARTICIPA_GIT_SHA=#Empty to use the latest commit of the branch
+
+SERVER_ENV_FILE=dev.env
+TAG=dev
+COMPOSE_PROJECT_NAME=plataforma-${TAG}
+
+DEV_MODE=true
+SERVER_LOG_LEVEL=info
+
+DEBUG=true
 ```
 
 ### Nginx Configuration
@@ -50,6 +59,9 @@ Remember to flush your DNS cache after editing the /etc/hosts file.
 
 ## Development Environment
 
+It's important that the DEV_MODE variable is set to true in the .env file. This relates to pol.is avoiding the use of HTTPS in the development environment.
+It's recommended that the DEBUG variable is set to true in the .env file. This will allow you to see the logs of the django server.
+
 To start the development environment, run:
 
 ```bash
@@ -68,3 +80,20 @@ If you want to wipe everything (INCLUDING THE DATABASE) and start from scratch, 
 make start-FULL-REBUILD
 ```
 
+
+## Test and Production Environment
+
+It's important that the DEV_MODE variable is set to false in the .env file. This relates to pol.is using HTTPS in the test and production environment.
+It's recommended that the DEBUG variable is set to false in the .env file. This will avoid showing the logs of the django server.
+
+To start the test environment, run:
+
+```bash
+make TEST run
+```
+
+To start the production environment, run:
+
+```bash
+make PROD run
+```
