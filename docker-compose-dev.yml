@@ -1,0 +1,115 @@
+
+
+services:
+ 
+  participa:
+    extends:
+        file: participa/docker-compose.yml
+        service: participa
+    restart: always
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=${POSTGRES_USER:?error}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:?error}
+      - DB_NAME=${POSTGRES_DB:?error}
+      - DB_PORT=${POSTGRES_PORT:?error}
+      - DEBUG=${DEBUG:?error}
+    networks:
+        - polis-net
+    labels:
+        polis_tag: ${TAG:-dev}
+    entrypoint: /entrypoint_dev.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  server:
+      env_file:
+        - ${SERVER_ENV_FILE:-.env}
+      extends:
+        file: polis/docker-compose.yml
+        service: server
+      depends_on:
+        postgres:
+          condition: service_healthy
+        file-server:
+          condition: service_started
+
+  math:
+    extends:
+        file: polis/docker-compose.yml
+        service: math
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      - MATH_ENV=prod
+      - WEBSERVER_USERNAME=ws-pass
+      - WEBSERVER_PASS=ws-user
+    depends_on:
+        postgres:
+          condition: service_healthy
+
+
+  postgres:
+    extends:
+        file: polis/docker-compose.yml
+        service: postgres
+    restart: "no"
+    ports:
+      - "54000:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s  
+
+  file-server:
+    extends:
+        file: polis/docker-compose.yml
+        service: file-server
+
+
+  nginx-proxy:
+    extends:
+        file: polis/docker-compose.yml
+        service: nginx-proxy
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/participa/staticfiles
+      - media_volume:/participa/mediafiles
+    depends_on:
+      server:
+        condition: service_started
+
+  maildev:
+    image: docker.io/maildev/maildev:1.1.1
+    labels:
+      polis_tag: ${TAG}
+    ports:
+      # User interface
+      - "1080:1080"
+      # SMTP port
+      - "1025:1025"
+
+networks:
+  polis-net:
+
+volumes:
+  backups:
+    labels:
+      polis_tag: ${TAG:-dev}
+  postgres:
+    labels:
+      polis_tag: ${TAG:-dev}
+  server-logs:
+    labels:
+      polis_tag: ${TAG:-dev}
+  media_volume:
+    labels:
+      polis_tag: ${TAG:-dev}
+  static_volume:
+    labels:
+      polis_tag: ${TAG:-dev}
+  redis_volume:
+    labels:
+      polis_tag: ${TAG:-dev}

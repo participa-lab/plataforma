@@ -10,7 +10,7 @@ export POLIS_GIT_BRANCH = $(shell grep -e ^POLIS_GIT_BRANCH ${ENV_NAME} | awk -F
 export POLIS_GIT_SHA = $(shell grep -e ^POLIS_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
 export PARTICIPA_GIT_BRANCH = $(shell grep -e ^PARTICIPA_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
 export PARTICIPA_GIT_SHA = $(shell grep -e ^PARTICIPA_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,""); print $$2}')
-export COMPOSE_FILE_ARGS = -f docker-compose.yml
+export COMPOSE_FILE_ARGS = -f docker-compose-dev.yml
 
 init:
 	git clone git@github.com:participa-lab/participa.git

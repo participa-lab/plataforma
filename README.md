@@ -110,3 +110,18 @@ make PROD run
 ```
 
 
+## Getting started
+
+After starting the project, you can access the polis project at polis.app.raul and the main participa project at app.raul.
+
+1. Create user in polis, accesing polis.app.raul/createuser (this url should be accesible only in development environment)
+2. Go to "Integrate" tab in polis and copy site_id
+3. Create django superuser in participa
+
+```bash
+docker-compose exec participa python manage.py createsuperuser
+```
+
+4. Access the admin panel at app.raul/admin and login with the superuser credentials
+5. Create a polis instance with the site_id copied from polis, and the url of the polis project (polis.app.raul)
+6. Create a conversation. You can now access the conversation at app.raul/polis/<conversation_id>
