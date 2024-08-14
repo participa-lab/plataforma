@@ -19,7 +19,7 @@ services:
     labels:
         polis_tag: ${TAG:-dev}
     healthcheck:
-      test: curl --fail http://localhost:8000 || exit 1
+      test: curl --fail http://localhost:8000/healthcheck/ || exit 1
       interval: 30s
       retries: 5
       start_period: 20s

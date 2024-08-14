@@ -106,6 +106,12 @@ build-no-cache: echo_vars ## Build all Docker containers without cache
 start-recreate: echo_vars ## Start all Docker containers with recreated environments
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up --force-recreate
 
+start-recreate-participa: echo_vars ## Start all Docker containers with recreated environments
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up participa --force-recreate
+
+start-recreate-nginx: echo_vars ## Start all Docker containers with recreated environments
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up nginx-proxy --force-recreate
+
 run: echo_vars ## Start all Docker containers with recreated environments
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up -d --force-recreate
 

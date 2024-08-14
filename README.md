@@ -80,6 +80,17 @@ If you want to wipe everything (INCLUDING THE DATABASE) and start from scratch, 
 make start-FULL-REBUILD
 ```
 
+If you want to rebuild a specific service, you can use:
+
+```bash
+make build-participa
+```
+
+and 
+
+```bash
+make start-recreate-participa
+```
 
 ## Test and Production Environment
 
@@ -97,3 +108,5 @@ To start the production environment, run:
 ```bash
 make PROD run
 ```
+
+
