@@ -107,12 +107,16 @@ start-recreate: echo_vars ## Start all Docker containers with recreated environm
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up --force-recreate
 
 start-recreate-participa: echo_vars ## Start all Docker containers with recreated environments
-	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up participa --force-recreate
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up -d participa --force-recreate
+
 
 start-recreate-nginx: echo_vars ## Start all Docker containers with recreated environments
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up nginx-proxy --force-recreate
 
 run: echo_vars ## Start all Docker containers with recreated environments
+	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up -d --force-recreate
+
+run-rebuild: echo_vars ## Start all Docker containers with recreated environments
 	docker compose ${COMPOSE_FILE_ARGS} --env-file ${ENV_FILE} up -d --force-recreate
 
 start-rebuild: echo_vars ## Start all Docker containers, [re]building as needed

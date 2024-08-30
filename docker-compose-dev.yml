@@ -23,6 +23,11 @@ services:
       postgres:
         condition: service_healthy
 
+  tailwind:
+    extends:
+        file: participa/docker-compose.yml
+        service: tailwind
+
   server:
       env_file:
         - ${SERVER_ENV_FILE:-.env}
