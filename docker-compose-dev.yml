@@ -22,20 +22,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./participa/staticfiles:/participa/staticfiles
-      - ./participa/mediafiles:/participa/mediafiles
-      - ./participa:/participa
 
-  tailwind:
-    extends:
-        file: participa/docker-compose.yml
-        service: tailwind
-    entrypoint: /entrypoint_tailwind.sh
-    volumes:
-      - ./participa/staticfiles:/participa/staticfiles
-      - ./participa/mediafiles:/participa/mediafiles
-      - ./participa:/participa
 
   server:
       env_file:
