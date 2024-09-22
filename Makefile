@@ -32,6 +32,13 @@ use-git-branch: # Use sha if set, if not use branch
 	else \
 		cd participa && git checkout ${PARTICIPA_GIT_SHA} && git pull; \
 	fi
+	
+# Function to append secret.env to the main environment file if it exists
+append_secret_env:
+	@if [ -f secret.env ]; then \
+		echo "Appending secret.env to ${ENV_FILE}"; \
+		cat secret.env >> ${ENV_FILE}; \
+	fi
 
 PROD: ## Run in prod mode (e.g. `make PROD start`, etc.) using config in `prod.env`
 	$(eval ENV_NAME = prod.env)
@@ -42,6 +49,7 @@ PROD: ## Run in prod mode (e.g. `make PROD start`, etc.) using config in `prod.e
 	$(eval PARTICIPA_GIT_BRANCH = $(shell grep -e ^PARTICIPA_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval PARTICIPA_GIT_SHA = $(shell grep -e ^PARTICIPA_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval COMPOSE_FILE_ARGS = -f docker-compose.yml)
+	$(MAKE) append_secret_env
 
 TEST: ## Run in test mode (e.g. `make TEST e2e-run`, etc.) using config in `test.env`
 	$(eval ENV_NAME = test.env)
@@ -52,6 +60,7 @@ TEST: ## Run in test mode (e.g. `make TEST e2e-run`, etc.) using config in `test
 	$(eval PARTICIPA_GIT_BRANCH = $(shell grep -e ^PARTICIPA_GIT_BRANCH ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval PARTICIPA_GIT_SHA = $(shell grep -e ^PARTICIPA_GIT_SHA ${ENV_NAME} | awk -F'[=]' '{gsub(/ /,"");print $$2}'))
 	$(eval COMPOSE_FILE_ARGS = -f docker-compose.yml)
+	$(MAKE) append_secret_env
 
 echo_vars: update-env use-git-branch
 	@echo ENV_FILE=${ENV_FILE}
