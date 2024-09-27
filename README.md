@@ -125,3 +125,9 @@ docker-compose exec participa python manage.py createsuperuser
 4. Access the admin panel at app.raul/admin and login with the superuser credentials
 5. Create a polis instance with the site_id copied from polis, and the url of the polis project (polis.app.raul)
 6. Create a conversation. You can now access the conversation at app.raul/polis/<conversation_id>
+
+
+# External DB
+0. create db and user
+1. variables
+2. run script to apply polis migrations

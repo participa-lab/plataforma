@@ -8,7 +8,7 @@ services:
         service: participa
     restart: always
     environment:
-      - DB_HOST=postgres
+      - DB_HOST=${POSTGRES_HOST_ONLY:?error}
       - DB_USER=${POSTGRES_USER:?error}
       - DB_PASSWORD=${POSTGRES_PASSWORD:?error}
       - DB_NAME=${POSTGRES_DB:?error}
@@ -25,9 +25,9 @@ services:
       retries: 5
       start_period: 20s
       timeout: 10s
-    depends_on:
-      postgres:
-        condition: service_healthy
+    #depends_on:
+  #    postgres:
+  #      condition: service_healthy
 
   server:
       env_file:
@@ -36,8 +36,8 @@ services:
         file: polis/docker-compose.yml
         service: server
       depends_on:
-        postgres:
-          condition: service_healthy
+  #      postgres:
+  #        condition: service_healthy
         file-server:
           condition: service_started
 
@@ -50,24 +50,24 @@ services:
       - MATH_ENV=prod
       - WEBSERVER_USERNAME=ws-pass
       - WEBSERVER_PASS=ws-user
-    depends_on:
-        postgres:
-          condition: service_healthy
+ #   depends_on:
+ #       postgres:
+ #         condition: service_healthy
 
 
-  postgres:
-    extends:
-        file: polis/docker-compose.yml
-        service: postgres
-    restart: "no"
-    ports:
-      - "54000:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "${POSTGRES_DB}"]
-      interval: 30s
-      timeout: 60s
-      retries: 5
-      start_period: 80s  
+  #postgres:
+  #  extends:
+  #      file: polis/docker-compose.yml
+  #      service: postgres
+  #  restart: "no"
+  #  ports:
+  #    - "54000:5432"
+  #  healthcheck:
+  #    test: ["CMD-SHELL", "pg_isready", "-d", "${POSTGRES_DB}"]
+  #    interval: 30s
+  #    timeout: 60s
+  #    retries: 5
+  #    start_period: 80s  
 
   file-server:
     extends:
@@ -89,15 +89,15 @@ services:
       server:
         condition: service_started
 
-  maildev:
-    image: docker.io/maildev/maildev:1.1.1
-    labels:
-      polis_tag: ${TAG}
-    ports:
+  #maildev:
+  #  image: docker.io/maildev/maildev:1.1.1
+  #  labels:
+  #    polis_tag: ${TAG}
+  #  ports:
       # User interface
-      - "1080:1080"
+  #    - "1080:1080"
       # SMTP port
-      - "1025:1025"
+  #    - "1025:1025"
 
 networks:
   polis-net:
@@ -106,9 +106,9 @@ volumes:
   backups:
     labels:
       polis_tag: ${TAG:-dev}
-  postgres:
-    labels:
-      polis_tag: ${TAG:-dev}
+  #postgres:
+  #  labels:
+  #    polis_tag: ${TAG:-dev}
   server-logs:
     labels:
       polis_tag: ${TAG:-dev}
